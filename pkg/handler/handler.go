@@ -1,8 +1,17 @@
 package handler
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/Manifoldz/TodoListRESTAPI/pkg/service"
+	"github.com/gin-gonic/gin"
+)
 
-type Handler struct{}
+type Handler struct {
+	services *service.Service
+}
+
+func NewHandler(services *service.Service) *Handler {
+	return &Handler{services}
+}
 
 // метод инициализации всех эндпоинтов
 func (h *Handler) InitRoutes() *gin.Engine {
