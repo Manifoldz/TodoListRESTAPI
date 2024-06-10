@@ -7,6 +7,8 @@ import (
 
 type ToDoList interface {
 	Create(list entities.ToDoList) (int, error)
+	GetAll() ([]entities.ToDoList, error)
+	GetById(id int) (entities.ToDoList, error)
 }
 type ToDoItem interface{}
 

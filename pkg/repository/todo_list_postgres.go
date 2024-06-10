@@ -30,3 +30,20 @@ func (r *TodoListPostgres) Create(list entities.ToDoList) (int, error) {
 
 	return id, tx.Commit()
 }
+
+func (r *TodoListPostgres) GetAll() ([]entities.ToDoList, error) {
+	var list []entities.ToDoList
+	query := fmt.Sprintf("SELECT * FROM %s", toDoListsTable)
+	err := r.db.Select(&list, query)
+
+	return list, err
+}
+
+func (r *TodoListPostgres) GetById(id int) (entities.ToDoList, error) {
+	var list entities.ToDoList
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id = $1", toDoListsTable)
+	err := r.db.Get(&list, query, id)
+
+	return list, err
+
+}
