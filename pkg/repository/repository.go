@@ -1,8 +1,13 @@
 package repository
 
-import "github.com/jmoiron/sqlx"
+import (
+	"github.com/Manifoldz/TodoListRESTAPI/internal/entities"
+	"github.com/jmoiron/sqlx"
+)
 
-type ToDoList interface{}
+type ToDoList interface {
+	Create(list entities.ToDoList) (int, error)
+}
 type ToDoItem interface{}
 
 type Repository struct {
@@ -11,5 +16,7 @@ type Repository struct {
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
-	return &Repository{}
+	return &Repository{
+		ToDoList: NewTodoListPostgres(db),
+	}
 }

@@ -1,8 +1,13 @@
 package service
 
-import "github.com/Manifoldz/TodoListRESTAPI/pkg/repository"
+import (
+	"github.com/Manifoldz/TodoListRESTAPI/internal/entities"
+	"github.com/Manifoldz/TodoListRESTAPI/pkg/repository"
+)
 
-type ToDoList interface{}
+type ToDoList interface {
+	Create(list entities.ToDoList) (int, error)
+}
 type ToDoItem interface{}
 
 type Service struct {
@@ -11,5 +16,7 @@ type Service struct {
 }
 
 func NewService(repos *repository.Repository) *Service {
-	return &Service{}
+	return &Service{
+		ToDoList: NewTodoListService(repos.ToDoList),
+	}
 }
