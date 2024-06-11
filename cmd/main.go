@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -17,6 +16,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+// @author Manifoldz
+// @title Todo List REST API
+// @version 1.0
+/// @description This is a REST API for a Todo List
+// @host localhost:8000
+// @BasePath /
+
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 	if err := initConfig(); err != nil {
@@ -28,7 +34,7 @@ func main() {
 	}
 
 	db, err := repository.NewPostgresDB(repository.Config{
-		Host:     os.Getenv("DB_HOST"),
+		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
 		DBName:   viper.GetString("db.dbname"),
@@ -37,7 +43,6 @@ func main() {
 	})
 
 	if err != nil {
-		fmt.Print("!!!\n\n!!!", os.Getenv("DB_HOST"))
 		logrus.Fatalf("error while connecting to database: %s", err.Error())
 	}
 
