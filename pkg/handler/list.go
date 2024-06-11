@@ -69,12 +69,12 @@ func (h *Handler) updateListById(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.UpdateById(id, input); err != nil {
+	if err := h.services.ToDoList.UpdateById(id, input); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, statusResponse{"success"})
+	c.JSON(http.StatusOK, statusResponse{Status: "success"})
 }
 
 func (h *Handler) deleteListById(c *gin.Context) {

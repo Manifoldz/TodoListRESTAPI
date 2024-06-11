@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/Manifoldz/TodoListRESTAPI/internal/server"
 	"github.com/Manifoldz/TodoListRESTAPI/pkg/handler"
@@ -40,10 +43,27 @@ func main() {
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 
-	svr := new(server.Server)
-	if err := svr.Start(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-		logrus.Fatalf("error while starting http server: %s", err.Error())
+	srv := new(server.Server)
+	go func() {
+		if err := srv.Start(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+			logrus.Fatalf("error while starting http server: %s", err.Error())
+		}
+	}()
+	logrus.Printf("Server started on port:  %s", viper.GetString("port"))
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	logrus.Printf("Server shutting down on port:  %s", viper.GetString("port"))
+
+	if err := srv.Stop(context.Background()); err != nil {
+		logrus.Fatalf("error while stopping http server:  %s", err.Error())
 	}
+
+	if err := db.Close(); err != nil {
+		logrus.Fatalf("error while closing database connection:  %s", err.Error())
+	}
+
 }
 
 func initConfig() error {
