@@ -38,7 +38,25 @@ func (h *Handler) getAllItem(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, "invalid list id parameter")
 		return
 	}
-	items, err := h.services.ToDoItem.GetAll(listId)
+
+	// Извлечение параметра фильтрации по статусу из запроса
+	statusQuery := c.Query("done")
+	var status *bool
+	if statusQuery != "" {
+		statusVal := statusQuery == "true"
+		status = &statusVal
+	}
+	// Извлечение параметров пагинации из запроса
+	offset, err := strconv.Atoi(c.Query("offset"))
+	if err != nil {
+		offset = 0
+	}
+	limit, err := strconv.Atoi(c.Query("limit"))
+	if err != nil {
+		limit = 10
+	}
+
+	items, err := h.services.ToDoItem.GetAll(listId, status, offset, limit)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -46,6 +64,7 @@ func (h *Handler) getAllItem(c *gin.Context) {
 
 	c.JSON(http.StatusOK, items)
 }
+
 func (h *Handler) getItemById(c *gin.Context) {
 	itemId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

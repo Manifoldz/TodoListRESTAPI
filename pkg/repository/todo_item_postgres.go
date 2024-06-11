@@ -41,15 +41,29 @@ func (r *TodoItemPostgres) Create(listId int, item entities.ToDoItem) (int, erro
 	return itemId, tx.Commit()
 }
 
-func (r *TodoItemPostgres) GetAll(listId int) ([]entities.ToDoItem, error) {
+func (r *TodoItemPostgres) GetAll(listId int, status *bool, offset, limit int) ([]entities.ToDoItem, error) {
 	var items []entities.ToDoItem
-	query := fmt.Sprintf("SELECT t1.id, t1.title, t1.description, t1.done FROM %s t1 INNER JOIN %s t2 ON t2.item_id  = t1.id WHERE t2.list_id  =  $1;", toDoItemsTable, listsItemsTable)
+	var query string
 
-	if err := r.db.Select(&items, query, listId); err != nil {
+	if status == nil {
+		query = fmt.Sprintf("SELECT t1.id, t1.title, t1.description, t1.done FROM %s t1 INNER JOIN %s t2 ON t2.item_id  = t1.id WHERE t2.list_id  =  $1 ORDER BY t1.id LIMIT $2 OFFSET $3;", toDoItemsTable, listsItemsTable)
+	} else {
+		query = fmt.Sprintf("SELECT t1.id, t1.title, t1.description, t1.done FROM %s t1 INNER JOIN %s t2 ON t2.item_id  = t1.id WHERE t2.list_id  =  $1 AND t1.done =  $2  ORDER BY t1.id LIMIT $3 OFFSET $4;", toDoItemsTable, listsItemsTable)
+	}
+
+	var err error
+	if status == nil {
+		err = r.db.Select(&items, query, listId, limit, offset)
+	} else {
+		err = r.db.Select(&items, query, listId, *status, limit, offset)
+	}
+
+	if err != nil {
 		return nil, err
 	}
 
 	return items, nil
+
 }
 
 func (r *TodoItemPostgres) GetById(itemId int) (entities.ToDoItem, error) {

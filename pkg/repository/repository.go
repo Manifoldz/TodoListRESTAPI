@@ -14,7 +14,7 @@ type ToDoList interface {
 }
 type ToDoItem interface {
 	Create(listId int, item entities.ToDoItem) (int, error)
-	GetAll(listId int) ([]entities.ToDoItem, error)
+	GetAll(listId int, status *bool, offset, limit int) ([]entities.ToDoItem, error)
 	GetById(itemId int) (entities.ToDoItem, error)
 	DeleteById(itemId int) error
 	UpdateById(itemId int, input entities.UpdateItemInput) error

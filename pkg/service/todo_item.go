@@ -26,8 +26,8 @@ func (s *TodoItemService) Create(listId int, item entities.ToDoItem) (int, error
 	return s.repo.Create(listId, item)
 }
 
-func (s *TodoItemService) GetAll(listId int) ([]entities.ToDoItem, error) {
-	return s.repo.GetAll(listId)
+func (s *TodoItemService) GetAll(listId int, status *bool, offset, limit int) ([]entities.ToDoItem, error) {
+	return s.repo.GetAll(listId, status, offset, limit)
 }
 
 func (s *TodoItemService) GetById(itemId int) (entities.ToDoItem, error) {
