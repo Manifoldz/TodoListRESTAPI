@@ -2,30 +2,26 @@
 PASSWORD=qwerty
 HOST_PORT=5432
 
-CONTAINER_NAME=todosrv-db
+CONTAINER_DB_NAME=todolistrestapi-db-1
+CONTAINER_APP_NAME=todolistrestapi-todosrv-1
 
 all:
 
 build: 
-	docker compose build todosrv
+	docker-compose build todosrv
 
 run:
 	docker-compose up todosrv
 
-pull-postgress:
-	docker pull postgres
+migrate:
+	migrate -path ./schema -database 'postgres://postgres:qwerty@0.0.0.0:5432/postgres?sslmode=disable' up
 
 docker-run:
-	docker run --name=$(CONTAINER_NAME) -e POSTGRES_PASSWORD=$(PASSWORD) -p $(HOST_PORT):5432 -d postgres
+	docker run --name=$(CONTAINER_DB_NAME) -e POSTGRES_PASSWORD=$(PASSWORD) -p $(HOST_PORT):5432 -d postgres
 
-docker-stop:
-	docker stop $(CONTAINER_NAME)
-
-docker-start:
-	docker start $(CONTAINER_NAME)
-
-docker-rm: docker-stop
-	docker rm $(CONTAINER_NAME)
+docker-rm:
+	docker stop $(CONTAINER_DB_NAME)
+	docker rm $(CONTAINER_DB_NAME)
 
 migrate-up:
 	migrate -path ./schema -database \
@@ -35,12 +31,14 @@ migrate-down:
 	migrate -path ./schema -database \
 	'postgres://postgres:$(PASSWORD)@localhost:$(HOST_PORT)/postgres?sslmode=disable' down
 
-connect:
-	docker exec -it $(CONTAINER_NAME) /bin/bash
+connect-db:
+	docker exec -it $(CONTAINER_DB_NAME) /bin/bash
 
-rebuild: migrate-down start
+connect-app:
+	docker exec -it $(CONTAINER_DB_NAME) /bin/bash
 
-test: post-createLists post-createItems put-doneItems
+test1: post-createLists post-createItems get-AllItems1
+test2: put-doneItems get-AllItems1 get-AllItems1Done get-AllItems1DonePag
 
 # Создать списки
 post-createLists:

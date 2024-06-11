@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -27,7 +28,7 @@ func main() {
 	}
 
 	db, err := repository.NewPostgresDB(repository.Config{
-		Host:     viper.GetString("db.host"),
+		Host:     os.Getenv("DB_HOST"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
 		DBName:   viper.GetString("db.dbname"),
@@ -36,6 +37,7 @@ func main() {
 	})
 
 	if err != nil {
+		fmt.Print("!!!\n\n!!!", os.Getenv("DB_HOST"))
 		logrus.Fatalf("error while connecting to database: %s", err.Error())
 	}
 
