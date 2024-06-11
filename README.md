@@ -9,7 +9,7 @@ REST API для веб приложения todo list для создания з
 Имеется возможность пагинации со статусом "Не выполнено" либо "Выполнено" и возможность фильтровать задачи по статусу.
 
 - Проект выполнен с использованием фреймворка gin, библиотек sqlx, viper.
-- Документация swagger
+- Документация swagger (не удается запустить описание эндпоинтов при запуске swag init -g cmd/main.go ошибка warning: failed to get package name in dir: pkg, error: execute go list command, exit status 1, stdout:, stderr:no Go files in ..)
 - Подход Чистой Архитектуры и внедрения зависимостей.
 - Graceful Shutdown
 - База для приложения postgres
