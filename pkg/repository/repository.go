@@ -12,7 +12,10 @@ type ToDoList interface {
 	DeleteById(id int) error
 	UpdateById(id int, input entities.UpdateListInput) error
 }
-type ToDoItem interface{}
+type ToDoItem interface {
+	Create(listId int, item entities.ToDoItem) (int, error)
+	GetAll(listId int) ([]entities.ToDoItem, error)
+}
 
 type Repository struct {
 	ToDoList
@@ -22,5 +25,6 @@ type Repository struct {
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		ToDoList: NewTodoListPostgres(db),
+		ToDoItem: NewTodoItemPostgres(db),
 	}
 }

@@ -9,10 +9,10 @@ type ToDoList struct {
 }
 
 type ToDoItem struct {
-	Id          int    `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description" `
-	Done        bool   `json:"done" `
+	Id          int    `json:"id" db:"id"`
+	Title       string `json:"title" db:"title" binding:"required"`
+	Description string `json:"description" db:"description"`
+	Done        bool   `json:"done" db:"done"`
 }
 
 type ListsItems struct {
